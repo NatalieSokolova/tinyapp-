@@ -6,7 +6,7 @@ app.set('view engine', 'ejs');
 
 // generates a "unique" shortURL
 const generateRandomString = () => {
-  return Math.random().toString(36).slice(7);
+  return Math.random().toString(36).substring(2, 8);
 };
 
 const urlDatabase = {
