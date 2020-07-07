@@ -70,6 +70,18 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+app.post('/urls/:shortURL', (req, res) =>{
+  const longURL = req.body.longURL;
+  // console.log('longURL: ', longURL)
+  const shortURL = req.params.shortURL;
+  // console.log('shortURL: ', shortURL)
+  urlDatabase[shortURL] = longURL;
+  // console.log('urlDatabase: ', urlDatabase)
+  res.redirect(`/urls`);
+});
+
+
+
 // app.get('/hello', (req, res) => {
 //   res.send('<html><body>Hello <b>World</b></body></html>\n');
 // });
