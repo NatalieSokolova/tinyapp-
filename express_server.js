@@ -44,15 +44,16 @@ app.get('/urls/:shortURL', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
-})
+});
 
 app.post('/urls', (req, res) => {
   // console.log('POST req: ', req.body); 
-  // console.log('longURL: ', req.body.longURL);
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  // console.log('database: ', urlDatabase);
-  res.send("Ok");         
+  const longURL = req.body.longURL
+  // console.log('longURL: ', longURL);
+  urlDatabase[shortURL] = longURL; // adds URL to database;
+  // console.log('database: ', urlDatabase); 
+  res.redirect(`/urls/${shortURL}`); // redirects to the 'TinyURL/Short URL' webpage after clicks Submit;
 });
 
 app.get('/hello', (req, res) => {
