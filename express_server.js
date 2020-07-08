@@ -182,6 +182,10 @@ app.post('/register', (req, res) => {
   const user = findUserByEmail(email); // checks if user already registered
 
   if (!user) {
+
+    if (email === '' || password === '') {
+      res.status(401).send('Please, fill out all the fields!');
+    }
     // if not registered - add to the USERS db
     const userID = addNewUser(name, email, password);
 
@@ -192,7 +196,7 @@ app.post('/register', (req, res) => {
     
     res.redirect('/urls');
   } else {
-    res.status(401).send('Error: email already exists');
+    res.status(401).send('Error: email already exists!');
   }
 })
 
