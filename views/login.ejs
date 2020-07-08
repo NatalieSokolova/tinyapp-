@@ -13,14 +13,9 @@
     <header><%- include('partials/_header') %></header>
     <main style="margin: 1em;">
       <div style="margin-bottom:1.5em; margin-top:3em">
-      <h2>Create an Account</h2>
+      <h2>Login</h2>
     </div>
-      <form action="/register" method="POST">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <br>
-          <input type="text" name="name" id="name" placeholder="Your Name" style="width: 50%; margin-bottom:1em">
-        </div>
+      <form action="/login" method="POST">
         <div class="form-group">
           <label for="email">Email:</label>
           <br>
@@ -31,7 +26,7 @@
           <br>
           <input type="password" name="password" id="password" placeholder="Your Password" style="width: 50%; margin-bottom:1.5em">
         </div>
-        <button type="submit" class="btn btn-primary">Register</button>
+        <button type="submit" class="btn btn-primary">Login</button>
       </form>
     </main>
       <!-- Bootstrap JS -->

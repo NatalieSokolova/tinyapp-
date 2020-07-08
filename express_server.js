@@ -66,6 +66,15 @@ const addNewUser = (name, email, password) => {
 // });
 
 //login
+
+app.get('/login', (req, res) => {
+  const templateVars = {
+    //username: null,
+    user: users[req.cookies['user_id']]
+  };
+  res.render('login', templateVars);
+});
+
 app.post('/login', (req, res) => {
   //const user = users[req.cookies['user_id']];
   const username = req.body.username;
