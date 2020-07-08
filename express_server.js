@@ -15,7 +15,7 @@ const urlDatabase = {
 
 // USERS database
 const users = { 
-  // example users for debugging
+  // example users for testing
 //   "userRandomID": {
 //     id: "userRandomID", 
 //     email: "user@example.com", 
@@ -67,16 +67,24 @@ const addNewUser = (name, email, password) => {
 
 //login
 app.post('/login', (req, res) => {
+  //const user = users[req.cookies['user_id']];
   const username = req.body.username;
   res.cookie('username', username);
-  console.log('username:', username)
+  // console.log('username:', username);
+  // console.log('body: ', req.body);
   res.redirect('/urls');
 });
 
 //logout
 app.post('/logout', (req, res) => {
-  const username = req.body.username;
-  res.clearCookie('username');
+  // const username = req.body.username;
+  // res.clearCookie('username');
+  // for (let urls in urlDatabase) {
+  //   delete urlDatabase[urls];
+  // }
+  // res.redirect('/urls');
+  const user = users[req.cookies['user_id']];
+  res.clearCookie('user_id');
   for (let urls in urlDatabase) {
     delete urlDatabase[urls];
   }
@@ -88,7 +96,8 @@ app.get('/urls', (req, res) => {
   //let webPage = { urls: urlDatabase };
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies['username']
+    username: req.cookies['username'],
+    user: users[req.cookies['user_id']]
   }
   res.render('urls_index', templateVars);
 });
@@ -96,7 +105,8 @@ app.get('/urls', (req, res) => {
 // newURL form
 app.get('/urls/new', (req, res) => {
   const templateVars = {
-    username: req.cookies['username']
+    username: req.cookies['username'],
+    user: users[req.cookies['user_id']]
   }
   res.render('urls_new', templateVars);
 });
@@ -109,6 +119,7 @@ app.get('/urls/:shortURL', (req, res) => {
     shortURL,
     longURL: urlDatabase[req.params.shortURL],
     username: req.cookies['username'],
+    user: users[req.cookies['user_id']]
   }
   res.render('urls_show', templateVars);
   } else { // if doesn't exist - redirect to urls list page
@@ -156,7 +167,8 @@ app.post('/urls/:shortURL', (req, res) => {
 // takes user to registration form
 app.get('/register', (req, res) => {
   const templateVars = {
-    username: null
+    username: null,
+    user: users[req.cookies['user_id']]
   };
   res.render('register', templateVars);
 })
