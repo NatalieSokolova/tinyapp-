@@ -7,16 +7,53 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-// database
+// URL database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-// generates a "unique" string (used for shortURL)
+// USERS database
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
+// generates a "unique" string 
 const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
+
+// name and pw might be the same, but email is unique
+const findUserByEmail = (email) => {
+  for (let user in users) {
+    if (users[user].email === email) {
+      return users[user];
+    }
+  }
+  return false;
+}
+
+const addNewUser = (name, email, password) => {
+  const userID = generateRandomString();
+
+  const newUser = {
+    id: userID,
+    name,
+    email,
+    password
+  };
+  users[userID] = newUser;
+  return userID;
+}
 
 // homepage message
 // app.get('/', (req, res) => {
@@ -115,11 +152,35 @@ app.post('/urls/:shortURL', (req, res) => {
   res.redirect('/urls');
 });
 
+// takes user to registration form
 app.get('/register', (req, res) => {
   const templateVars = {
     username: null
   };
   res.render('register', templateVars);
+})
+
+app.post('/register', (req, res) => {
+  //const user = generateRandomString();
+  const name = req.body.name;
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const user = findUserByEmail(email); // checks if user already registered
+
+  if (!user) {
+    // if not registered - add to the USERS db
+    const userID = addNewUser(name, email, password);
+
+    console.log('userID: ', userID);
+
+    // set a user_id cookie containing the user's newly generated ID
+    res.cookie('user_id', userID);
+    
+    res.redirect('/urls');
+  } else {
+    res.status(401).send('Error: email already exists');
+  }
 })
 
 // app.get('/hello', (req, res) => {
