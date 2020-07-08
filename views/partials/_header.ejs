@@ -19,25 +19,11 @@
       </div>
     </div>
     <% } else { %>
-      <button type="submit" class="btn btn-dark my-2 my-sm-0">Logout</button>
-    <% } %> 
-
-
-    <!-- <% if (!user) { %>
-      <form class="form-inline" method="POST" action="/login">
-        <input class="form-control" type="text" name="user_id" placeholder="Username" style="width: 300px; margin: 1em">
-        <button type="submit" class="btn btn-outline-dark">Login</button>
-      </form>
-    <% } else { %>
       <form class="form-inline" action="/logout" method="POST">
         <div class="pull-left" style="margin-right:15px">
-            Logged In As: <%= user.email %> 
           </div>
             <button type="submit" class="btn btn-dark my-2 my-sm-0">Logout</button>
       </form>
-    <% } %> -->
-
-
-
+    <% } %> 
   </nav>
 </header>
