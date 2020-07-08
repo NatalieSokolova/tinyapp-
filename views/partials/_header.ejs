@@ -11,13 +11,17 @@
       </div>
     </div>
 
-
+    <% if (!user) { %>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav ml-auto">
         <a class="nav-item nav-link" href="/login">Login</a>
         <a class="nav-item nav-link" href="/register">Register</a>
       </div>
     </div>
+    <% } else { %>
+      <button type="submit" class="btn btn-dark my-2 my-sm-0">Logout</button>
+    <% } %> 
+
 
     <!-- <% if (!user) { %>
       <form class="form-inline" method="POST" action="/login">
