@@ -76,12 +76,25 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  //const user = users[req.cookies['user_id']];
-  const username = req.body.username;
-  res.cookie('username', username);
-  // console.log('username:', username);
-  // console.log('body: ', req.body);
-  res.redirect('/urls');
+  const user = findUserByEmail(req.body.email); // checks if user already registered
+  
+  if (!user.email) {
+    return res.status(403).send('Sorry, we can\'t find a user with matching email address!');
+  } else {
+    if (!user.password) {
+      return res.status(403).send('Sorry, your password is incorrect!');
+    };
+  };
+    const userID = user.id;
+    console.log('userID: ', userID);
+    // set a user_id cookie containing the user's ID
+    res.cookie('user_id', userID);
+    res.redirect('/urls');
+  // const username = req.body.username;
+  // res.cookie('username', username);
+  // // console.log('username:', username);
+  // // console.log('body: ', req.body);
+  // res.redirect('/urls');
 });
 
 //logout
