@@ -7,12 +7,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+// database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-// generates a "unique" shortURL
+// generates a "unique" string (used for shortURL)
 const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
@@ -22,9 +23,9 @@ const generateRandomString = () => {
 //   res.send('Hello!');
 // });
 
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
+// app.get('/urls.json', (req, res) => {
+//   res.json(urlDatabase);
+// });
 
 //login
 app.post('/login', (req, res) => {
@@ -77,7 +78,7 @@ app.get('/urls/:shortURL', (req, res) => {
   }
 });
 
-// redirects to longURL
+// redirects to longURL website
 app.get('/u/:shortURL', (req, res) => {
   console.log(req.params.shortURL) // short URL(found in address bar)
   const longURL = urlDatabase[req.params.shortURL];
@@ -103,6 +104,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+// input new url into edit form
 app.post('/urls/:shortURL', (req, res) => {
   const longURL = req.body.longURL;
   // console.log('longURL: ', longURL)
@@ -113,7 +115,12 @@ app.post('/urls/:shortURL', (req, res) => {
   res.redirect('/urls');
 });
 
-
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: null
+  };
+  res.render('register', templateVars);
+})
 
 // app.get('/hello', (req, res) => {
 //   res.send('<html><body>Hello <b>World</b></body></html>\n');
