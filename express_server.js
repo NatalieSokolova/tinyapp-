@@ -224,28 +224,25 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   //const user = generateRandomString();
-  const name = req.body.name;
-  const email = req.body.email;
-  const password = req.body.password;
-
-  const user = findUserByEmail(email); // checks if user already registered
-
-  if (!user) {
-
-    if (email === '' || password === '') {
-      res.status(401).send('Please, fill out all the fields!');
+  const templateVars = {
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    user: findUserByEmail(req.body.email) // checks if user already registered
+  }
+  if (!templateVars.user) {
+    if (templateVars.email === '' || templateVars.password === '') {
+      res.render('empty_fields_error', templateVars);
     }
     // if not registered - add to the USERS db
-    const userID = addNewUser(name, email, password);
+    const userID = addNewUser(templateVars.name, templateVars.email, templateVars.password);
 
     console.log('userID: ', userID);
-
     // set a user_id cookie containing the user's newly generated ID
     res.cookie('user_id', userID);
-    
     res.redirect('/urls');
   } else {
-    res.status(401).send('Error: email already exists!');
+    res.render('email_exists_error', templateVars);
   }
 });
 
