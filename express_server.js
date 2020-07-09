@@ -23,14 +23,24 @@ const generateRandomString = () => {
 };
 
 // name and pw might be the same, but email is unique
-const findUserByEmail = (email) => {
-  for (let user in users) {
-    if (users[user].email === email) {
-      return users[user];
+// const findUserByEmail = (email) => {
+//   for (let user in users) {
+//     if (users[user].email === email) {
+//       return users[user];
+//     }
+//   }
+//   return false;
+// };
+
+const findUserByEmail = (email, database) => {
+  for (let user in database) {
+    if (database[user].email === email) {
+      return database[user];
     }
   }
   return false;
 };
+
 
 const addNewUser = (name, email, password) => {
   const userID = generateRandomString();
@@ -57,7 +67,7 @@ app.post('/login', (req, res) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    user: findUserByEmail(req.body.email) // checks if user already registered
+    user: findUserByEmail(req.body.email, users) // checks if user already registered
   };
   if (!templateVars.user.email) {
     res.render('email_error', templateVars);
@@ -94,7 +104,7 @@ app.get('/urls', (req, res) => {
 
 // newURL form
 app.get('/urls/new', (req, res) => {
-  //const user = findUserByEmail(req.body.email); // checks if user already registered
+  //const user = findUserByEmail(req.body.email, users); // checks if user already registered
   if (req.session.user_id) { // rememder to logout to clear cookies before checking!
     const templateVars = {
       user: users[req.session.user_id]
@@ -168,7 +178,7 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:shortURL/delete', (req, res) => {
   // console.log('shortURL: ', req.params.shortURL)
   const templateVars = {
-    user: findUserByEmail(req.body.email)
+    user: findUserByEmail(req.body.email, users)
   };
   if (urlDatabase[req.params.shortURL].userID === req.session.user_id) {
     delete urlDatabase[req.params.shortURL];
@@ -208,7 +218,7 @@ app.post('/register', (req, res) => {
     name: req.body.name,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10),
-    user: findUserByEmail(req.body.email) // checks if user already registered
+    user: findUserByEmail(req.body.email, users) // checks if user already registered
   };
   // console.log('pw:', templateVars.password)
   if (!templateVars.user) {
