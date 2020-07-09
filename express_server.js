@@ -93,11 +93,18 @@ app.get('/urls', (req, res) => {
 
 // ????? bug when registered - create new, when logged in - log in page
 app.get('/urls/new', (req, res) => {
+  const user = findUserByEmail(req.body.email); // checks if user already registered
+
+  if (req.cookies['user_id']) { // logout to clear cookiesbefore checking!
+
 const templateVars = {
       user: users[req.cookies['user_id']]
     };
 
     res.render('urls_new', templateVars);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 
