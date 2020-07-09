@@ -149,12 +149,26 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 // input new url into edit form
 app.post('/urls/:shortURL', (req, res) => {
-  const longURL = req.body.longURL;
-  // console.log('longURL: ', longURL)
   const shortURL = req.params.shortURL;
-  // console.log('shortURL: ', shortURL)
-  urlDatabase[shortURL] = longURL;
-  // console.log('urlDatabase: ', urlDatabase)
+  console.log('shortURL: ', shortURL)
+
+  const longURL = urlDatabase[req.params.shortURL].longURL
+
+  // urlDatabase[req.params.shortURL].longURL
+
+   console.log('longURL: ', longURL)
+  
+  //urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = {
+    longURL,
+    userID: req.cookies['user_id']
+  }
+
+   console.log('urlDatabase: ', urlDatabase)
+   console.log('req.body: ', req.body.longURL)
+
+   urlDatabase[shortURL].longURL = req.body.longURL
+
   res.redirect('/urls');
 });
 
