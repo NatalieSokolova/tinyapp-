@@ -9,8 +9,8 @@ app.use(cookieParser());
 
 // URL database
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 // USERS database
@@ -90,17 +90,30 @@ app.get('/urls', (req, res) => {
 
 // newURL form
 app.get('/urls/new', (req, res) => {
-  if (req.cookies['user_id'] !== undefined) {
+  const user = findUserByEmail(req.body.email); // checks if user already registered
+
+  if (user && (req.cookies['user_id'] !== undefined)) {
   const templateVars = {
     user: users[req.cookies['user_id']]
   };
   //console.log('body: ', req.param)
   //console.log('userID: ', req.cookies['user_id'])
+  console.log('urlDB :', urlDatabase)
   res.render('urls_new', templateVars);
   } else {
     res.redirect('/login');
   }
 });
+
+// ???????
+app.post('/urls/new', (req, res) => {
+
+  const shortURL = generateRandomString();
+  urlDatabase.shortURL.longURL = req.body
+  console.log('req.body: ', req.body)
+  urlDatabase.shortURL.userID = users[req.cookies['user_id']]
+  console.log('urlDB: ', urlDatabase)
+})
 
 //redirects to specific short/longURL page
 app.get('/urls/:shortURL', (req, res) => {
