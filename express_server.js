@@ -90,10 +90,16 @@ app.get('/urls', (req, res) => {
 
 // newURL form
 app.get('/urls/new', (req, res) => {
+  if (req.cookies['user_id'] !== undefined) {
   const templateVars = {
     user: users[req.cookies['user_id']]
   };
+  //console.log('body: ', req.param)
+  //console.log('userID: ', req.cookies['user_id'])
   res.render('urls_new', templateVars);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 //redirects to specific short/longURL page
