@@ -53,16 +53,21 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const user = findUserByEmail(req.body.email); // checks if user already registered
+  const templateVars = {
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    user: findUserByEmail(req.body.email) // checks if user already registered
+  }
   
-  if (!user.email) {
-    return res.status(403).send('Sorry, we can\'t find a user with matching email address!');
+  if (!templateVars.user.email) {
+    res.render('email_error', templateVars)
   } else {
-    if (req.body.password !== user.password) { // checks if the pw input matches registered pw
-      return res.status(403).send('Sorry, your password is incorrect!');
+    if (req.body.password !== templateVars.user.password) { // checks if the pw input matches registered pw
+      res.render('password_error', templateVars)
     }
   }
-  const userID = user.id;
+  const userID = templateVars.user.id;
 
   console.log('userID: ', userID);
   // set a user_id cookie containing the user's ID
