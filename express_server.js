@@ -165,8 +165,17 @@ app.post('/urls', (req, res) => {
 // deletes a URL from urlDatabase
 app.post('/urls/:shortURL/delete', (req, res) => {
   // console.log('shortURL: ', req.params.shortURL)
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls');
+  const templateVars = {
+    user: findUserByEmail(req.body.email)
+  }
+  if (urlDatabase[req.params.shortURL].userID === req.cookies['user_id']) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+  } else {
+    res.render('error_message.ejs', templateVars)
+  } 
+
+  
 });
 
 // input new url into edit form
