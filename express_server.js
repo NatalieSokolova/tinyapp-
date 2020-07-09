@@ -146,9 +146,34 @@ app.get('/urls/:shortURL', (req, res) => {
 
 // redirects to longURL website
 app.get('/u/:shortURL', (req, res) => {
-  console.log(req.params.shortURL); // short URL(found in address bar)
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+
+  const templateVars = {
+      //urls: urlDatabase,
+    user: users[req.cookies['user_id']],
+    shortURL: req.params.shortURL,
+    keys: Object.keys(urlDatabase)
+  }
+// loop url db to check if shortURL is there
+
+for (const key in templateVars.keys) {
+
+  console.log('keys: ', templateVars.keys)
+  console.log('key: ', templateVars.keys[key] )
+  console.log('shortURL: ', templateVars.shortURL)
+
+  if (templateVars.keys[key] === templateVars.shortURL) {
+    res.redirect(urlDatabase[templateVars.shortURL].longURL);
+  } else {
+    res.render('url_error.ejs', templateVars);
+  }
+}
+
+  // if (templateVars.shortURL) {
+  //   console.log(templateVars.shortURL); // short URL(found in address bar)
+  //   res.redirect(urlDatabase[templateVars.shortURL].longURL);
+  // } else if (!urlDatabase[shortURL]) {
+  //   res.render('url_error.ejs', templateVars)
+  // }
 });
 
 // adds new URL to the urlDatabase
