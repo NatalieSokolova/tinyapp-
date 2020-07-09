@@ -82,11 +82,22 @@ app.post('/logout', (req, res) => {
 
 // list of all URLs ?????
 app.get('/urls', (req, res) => {
+
   const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
-  res.render('urls_index', templateVars);
+
+  if (req.cookies['user_id']) {
+
+    res.render('urls_index', templateVars);
+
+  } else {
+
+    res.render('error_message.ejs', templateVars)
+
+  }
+
 });
 
 // newURL form
