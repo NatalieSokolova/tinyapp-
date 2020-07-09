@@ -9,8 +9,8 @@ app.use(cookieParser());
 
 // URL database
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
+  // b6UTxQ: { longURL: "https://www.tsn.ca", userID: "dcewc3" },
+  // i3BoGr: { longURL: "https://www.google.ca", userID: "tiklay" }
 };
 
 // USERS database
@@ -80,7 +80,7 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
-// list of all URLs
+// list of all URLs ?????
 app.get('/urls', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
@@ -90,12 +90,10 @@ app.get('/urls', (req, res) => {
 });
 
 // newURL form
-
-// ????? bug when registered - create new, when logged in - log in page
 app.get('/urls/new', (req, res) => {
   const user = findUserByEmail(req.body.email); // checks if user already registered
 
-  if (req.cookies['user_id']) { // logout to clear cookiesbefore checking!
+  if (req.cookies['user_id']) { // logout to clear cookies before checking!
 
 const templateVars = {
       user: users[req.cookies['user_id']]
@@ -112,13 +110,30 @@ const templateVars = {
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[req.params.shortURL].longURL
+
+
+  // for (const url in urlDatabase) {
+  //   if (req.cookies['user_id'] !== urlDatabase[url].userID) { // comparing the url userID with the logged-in user's ID
+  //   console.log('cookies: ', req.cookies['user_id'])
+  //   console.log('url: ', urlDatabase[url])
+  //   console.log('userID: ', urlDatabase[url].userID)
+  //   res.render('error_message.ejs', templateVars);
+  //   } 
+  // }
+
   if (urlDatabase[shortURL]) { // if exists - render the page
     const templateVars = {
       shortURL,
       longURL,
       user: users[req.cookies['user_id']]
     };
+
+    if (urlDatabase[shortURL].userID === req.cookies['user_id']) {
+
     res.render('urls_show', templateVars);
+  } else {
+    res.render('error_message.ejs', templateVars)
+  } 
   } else { // if doesn't exist - redirect to urls list page
     res.redirect('/urls');
   }
