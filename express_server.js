@@ -63,6 +63,7 @@ app.post('/login', (req, res) => {
     }
   }
   const userID = user.id;
+
   console.log('userID: ', userID);
   // set a user_id cookie containing the user's ID
   res.cookie('user_id', userID);
@@ -89,31 +90,31 @@ app.get('/urls', (req, res) => {
 });
 
 // newURL form
-app.get('/urls/new', (req, res) => {
-  const user = findUserByEmail(req.body.email); // checks if user already registered
 
-  if (user && (req.cookies['user_id'] !== undefined)) {
-  const templateVars = {
-    user: users[req.cookies['user_id']]
-  };
-  //console.log('body: ', req.param)
-  //console.log('userID: ', req.cookies['user_id'])
-  console.log('urlDB :', urlDatabase)
-  res.render('urls_new', templateVars);
-  } else {
-    res.redirect('/login');
-  }
+// ????? bug when registered - create new, when logged in - log in page
+app.get('/urls/new', (req, res) => {
+//   const user = findUserByEmail(req.body.email); // checks if user already registered
+//   //const isLoggedIn = 
+// console.log('cookie: ', req.cookies['user_id'])
+//   if (user) { // checks if registered and if cookies present (logged in)
+    
+//   const templateVars = {
+//     user: users[req.cookies['user_id']]
+//   };
+//   console.log('body: ', req.body)
+//   console.log('userID: ', req.cookies['user_id'])
+//   console.log('urlDB :', urlDatabase)
+//   res.render('urls_new', templateVars);
+//   } else {
+//     res.redirect('/login');
+//   }
+const templateVars = {
+      user: users[req.cookies['user_id']]
+    };
+
+    res.render('urls_new', templateVars);
 });
 
-// ???????
-app.post('/urls/new', (req, res) => {
-
-  const shortURL = generateRandomString();
-  urlDatabase.shortURL.longURL = req.body
-  console.log('req.body: ', req.body)
-  urlDatabase.shortURL.userID = users[req.cookies['user_id']]
-  console.log('urlDB: ', urlDatabase)
-})
 
 //redirects to specific short/longURL page
 app.get('/urls/:shortURL', (req, res) => {
@@ -141,8 +142,15 @@ app.get('/u/:shortURL', (req, res) => {
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
-  
+  // urlDatabase[shortURL] = longURL;
+  const userID = req.cookies['user_id']
+  console.log('cookies: ', userID)
+
+  urlDatabase[shortURL] = {
+    longURL,
+    userID
+  }
+  console.log('urlDB: ', urlDatabase)
   res.redirect(`/urls/${shortURL}`); // redirects to the 'TinyURL/Short URL' webpage after clicks Submit;
 });
 
