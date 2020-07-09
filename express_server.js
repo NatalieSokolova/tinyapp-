@@ -22,25 +22,7 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
-// name and pw might be the same, but email is unique
-// const findUserByEmail = (email) => {
-//   for (let user in users) {
-//     if (users[user].email === email) {
-//       return users[user];
-//     }
-//   }
-//   return false;
-// };
-
-const findUserByEmail = (email, database) => {
-  for (let user in database) {
-    if (database[user].email === email) {
-      return database[user];
-    }
-  }
-  return false;
-};
-
+const findUserByEmail = require('./helpers')
 
 const addNewUser = (name, email, password) => {
   const userID = generateRandomString();
