@@ -54,16 +54,19 @@ app.post('/login', (req, res) => {
   if (!templateVars.user.email) {
     res.render('email_error', templateVars)
   } else {
-    if (req.body.password !== templateVars.user.password) { // checks if the pw input matches registered pw
+     //if (templateVars.password !== templateVars.user.password) { // checks if the pw input matches registered pw
+    if (!bcrypt.compareSync(templateVars.password, templateVars.user.password)) {
       res.render('password_error', templateVars)
     }
   }
+
   const userID = templateVars.user.id;
   console.log('userID: ', userID);
   // set a user_id cookie containing the user's ID
   res.cookie('user_id', userID);
   res.redirect('/urls');
 });
+
 //logout
 app.post('/logout', (req, res) => {
   //const user = users[req.cookies['user_id']];
@@ -73,6 +76,7 @@ app.post('/logout', (req, res) => {
   // }
   res.redirect('/urls');
 });
+
 // list of all URLs ?????
 app.get('/urls', (req, res) => {
   const templateVars = {
@@ -85,6 +89,7 @@ app.get('/urls', (req, res) => {
     res.render('error_message.ejs', templateVars)
   }
 });
+
 // newURL form
 app.get('/urls/new', (req, res) => {
   const user = findUserByEmail(req.body.email); // checks if user already registered
@@ -97,6 +102,7 @@ const templateVars = {
     res.redirect('/login');
   }
 });
+
 //redirects to specific short/longURL page
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
