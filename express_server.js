@@ -68,7 +68,6 @@ app.post('/login', (req, res) => {
     }
   }
   const userID = templateVars.user.id;
-
   console.log('userID: ', userID);
   // set a user_id cookie containing the user's ID
   res.cookie('user_id', userID);
@@ -93,7 +92,7 @@ app.get('/urls', (req, res) => {
     user: users[req.cookies['user_id']]
   };
 
-  if (req.cookies['user_id']) {
+  if (req.cookies['user_id']) { // checks if logged in
 
     res.render('urls_index', templateVars);
 
@@ -127,16 +126,6 @@ app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[req.params.shortURL].longURL
 
-
-  // for (const url in urlDatabase) {
-  //   if (req.cookies['user_id'] !== urlDatabase[url].userID) { // comparing the url userID with the logged-in user's ID
-  //   console.log('cookies: ', req.cookies['user_id'])
-  //   console.log('url: ', urlDatabase[url])
-  //   console.log('userID: ', urlDatabase[url].userID)
-  //   res.render('error_message.ejs', templateVars);
-  //   } 
-  // }
-
   if (urlDatabase[shortURL]) { // if exists - render the page
     const templateVars = {
       shortURL,
@@ -148,7 +137,7 @@ app.get('/urls/:shortURL', (req, res) => {
 
     res.render('urls_show', templateVars);
   } else {
-    res.render('error_message.ejs', templateVars)
+    res.render('manipulate_error.ejs', templateVars)
   } 
   } else { // if doesn't exist - redirect to urls list page
     res.redirect('/urls');
@@ -188,7 +177,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     delete urlDatabase[req.params.shortURL];
     res.redirect('/urls');
   } else {
-    res.render('error_message.ejs', templateVars)
+    res.render('manipulate_error.ejs', templateVars)
   } 
 
   
