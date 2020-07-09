@@ -93,21 +93,6 @@ app.get('/urls', (req, res) => {
 
 // ????? bug when registered - create new, when logged in - log in page
 app.get('/urls/new', (req, res) => {
-//   const user = findUserByEmail(req.body.email); // checks if user already registered
-//   //const isLoggedIn = 
-// console.log('cookie: ', req.cookies['user_id'])
-//   if (user) { // checks if registered and if cookies present (logged in)
-    
-//   const templateVars = {
-//     user: users[req.cookies['user_id']]
-//   };
-//   console.log('body: ', req.body)
-//   console.log('userID: ', req.cookies['user_id'])
-//   console.log('urlDB :', urlDatabase)
-//   res.render('urls_new', templateVars);
-//   } else {
-//     res.redirect('/login');
-//   }
 const templateVars = {
       user: users[req.cookies['user_id']]
     };
@@ -119,10 +104,11 @@ const templateVars = {
 //redirects to specific short/longURL page
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[req.params.shortURL].longURL
   if (urlDatabase[shortURL]) { // if exists - render the page
     const templateVars = {
       shortURL,
-      longURL: urlDatabase[req.params.shortURL],
+      longURL,
       user: users[req.cookies['user_id']]
     };
     res.render('urls_show', templateVars);
@@ -134,7 +120,7 @@ app.get('/urls/:shortURL', (req, res) => {
 // redirects to longURL website
 app.get('/u/:shortURL', (req, res) => {
   console.log(req.params.shortURL); // short URL(found in address bar)
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
