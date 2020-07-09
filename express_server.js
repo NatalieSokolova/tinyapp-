@@ -31,7 +31,7 @@ const addNewUser = (name, email, password) => {
     id: userID,
     name,
     email,
-    password: bcrypt.hashSync(password, 10)
+    password
   };
   users[userID] = newUser;
   return userID;
@@ -54,7 +54,7 @@ app.post('/login', (req, res) => {
   if (!templateVars.user.email) {
     res.render('email_error', templateVars)
   } else {
-     //if (templateVars.password !== templateVars.user.password) { // checks if the pw input matches registered pw
+    // checks if the pw input matches registered pw
     if (!bcrypt.compareSync(templateVars.password, templateVars.user.password)) {
       res.render('password_error', templateVars)
     }
@@ -209,9 +209,10 @@ app.post('/register', (req, res) => {
   const templateVars = {
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password,
+    password: bcrypt.hashSync(req.body.password, 10),
     user: findUserByEmail(req.body.email) // checks if user already registered
   }
+  console.log('pw:', templateVars.password)
   if (!templateVars.user) {
     if (templateVars.email === '' || templateVars.password === '') {
       res.render('empty_fields_error', templateVars);
