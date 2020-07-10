@@ -22,26 +22,15 @@ describe('findUserByEmail', () => {
     assert.equal(expectedOutput, user);
   });
 
-  it('should return undefined if email doesn\'t exist', function() {
+  it('should return false if email doesn\'t exist', function() {
     const user = findUserByEmail("user@gmail.com", testUsers)
     const expectedOutput = false;
     assert.equal(expectedOutput, user);
-  })
-    
+  });
+
+  it('should return false if email is an empty string', function() {
+    const user = findUserByEmail("", testUsers)
+    const expectedOutput = false;
+    assert.equal(expectedOutput, user);
+  });
 });
-
-// describe("#shouldBuyCar()", function() {
-
-//   it("should return false if it's a hatchback", function() {
-//     const car = {
-//       type: 'hatchback'
-//     };
-//     const shouldBuy = shouldBuyCar(car);
-//     assert.isFalse(shouldBuy);
-//   });
-
-//   it("should return false when there are no details about the car", function() {
-//     const car = {};
-//     const shouldBuy = shouldBuyCar(car);
-//     assert.isFalse(shouldBuy);
-//   })
