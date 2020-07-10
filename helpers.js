@@ -8,3 +8,5 @@ const findUserByEmail = (email, database) => {
 };
 
 module.exports = findUserByEmail;
+
+

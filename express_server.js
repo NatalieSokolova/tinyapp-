@@ -17,12 +17,12 @@ const urlDatabase = {};
 // USERS database
 const users = {};
 
+const findUserByEmail = require('./helpers');
+
 // generates a "unique" string
 const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
-
-const findUserByEmail = require('./helpers')
 
 const addNewUser = (name, email, password) => {
   const userID = generateRandomString();
@@ -35,6 +35,8 @@ const addNewUser = (name, email, password) => {
   users[userID] = newUser;
   return userID;
 };
+
+
 
 //login
 app.get('/login', (req, res) => {
@@ -195,7 +197,6 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  //const user = generateRandomString();
   const templateVars = {
     name: req.body.name,
     email: req.body.email,
