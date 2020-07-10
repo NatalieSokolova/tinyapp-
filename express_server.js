@@ -10,21 +10,15 @@ app.use(cookieSession({
   keys: ['key1', 'key2'],
 }));
 const bcrypt = require('bcrypt');
+
 // URL database
 const urlDatabase = {};
 
 // USERS database
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
+const users = {
+  id: '',
+  email: '',
+  password: ''
 };
 
 const findUserByEmail = require('./helpers');
@@ -46,15 +40,28 @@ const addNewUser = (name, email, password) => {
   return userID;
 };
 
+app.get('/', (req, res) => {
 
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('login');
+  }
+});
 
 //login
 app.get('/login', (req, res) => {
+
   const templateVars = {
     user: users[req.session.user_id]
   };
-  res.render('login', templateVars);
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('login', templateVars);
+  }
 });
+
 app.post('/login', (req, res) => {
   const templateVars = {
     name: req.body.name,
@@ -67,19 +74,22 @@ app.post('/login', (req, res) => {
   } else {
     if (!bcrypt.compareSync(templateVars.password, templateVars.user.password)) {
       res.render('password_error', templateVars);
+    } else {
+      const userID = templateVars.user.id;
+      // set a user_id cookie containing the user's ID
+      req.session.user_id = userID;
+      res.redirect('/urls');
     }
   }
-  const userID = templateVars.user.id;
-  //console.log('userID: ', userID);
-  // set a user_id cookie containing the user's ID
-  req.session.user_id = userID;
-  res.redirect('/urls');
+  
 });
+
 //logout
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/urls');
 });
+
 // list of all URLs ?????
 app.get('/urls', (req, res) => {
   const templateVars = {
@@ -92,9 +102,9 @@ app.get('/urls', (req, res) => {
     res.render('error_message.ejs', templateVars);
   }
 });
+
 // newURL form
 app.get('/urls/new', (req, res) => {
-  //const user = findUserByEmail(req.body.email, users); // checks if user already registered
   if (req.session.user_id) { // rememder to logout to clear cookies before checking!
     const templateVars = {
       user: users[req.session.user_id]
@@ -104,6 +114,7 @@ app.get('/urls/new', (req, res) => {
     res.redirect('/login');
   }
 });
+
 //redirects to specific short/longURL page
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
@@ -123,9 +134,9 @@ app.get('/urls/:shortURL', (req, res) => {
     res.redirect('/urls');
   }
 });
+
 // redirects to longURL website
 app.get('/u/:shortURL', (req, res) => {
-  console.log(req.params.shortURL); // short URL(found in address bar)
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
   const templateVars = {
@@ -136,9 +147,6 @@ app.get('/u/:shortURL', (req, res) => {
   };
   // loop url db to check if shortURL is there
   for (const key in templateVars.keys) {
-  // console.log('keys: ', templateVars.keys)
-  // console.log('key: ', templateVars.keys[key] )
-  // console.log('shortURL: ', templateVars.shortURL)
     if (templateVars.keys[key] === templateVars.shortURL) {
       res.redirect(urlDatabase[templateVars.shortURL].longURL);
     } else {
@@ -146,23 +154,22 @@ app.get('/u/:shortURL', (req, res) => {
     }
   }
 });
+
 // adds new URL to the urlDatabase
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
   // urlDatabase[shortURL] = longURL;
   const userID = req.session.user_id;
-  console.log('cookies: ', userID);
   urlDatabase[shortURL] = {
     longURL,
     userID
   };
-  console.log('urlDB: ', urlDatabase);
   res.redirect(`/urls/${shortURL}`); // redirects to the 'TinyURL/Short URL' webpage after clicks Submit;
 });
+
 // deletes a URL from urlDatabase
 app.post('/urls/:shortURL/delete', (req, res) => {
-  // console.log('shortURL: ', req.params.shortURL)
   const templateVars = {
     user: findUserByEmail(req.body.email, users)
   };
@@ -173,21 +180,19 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     res.render('manipulate_error.ejs', templateVars);
   }
 });
+
 // input new url into edit form
 app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  console.log('shortURL: ', shortURL);
   const longURL = urlDatabase[req.params.shortURL].longURL;
-  //  console.log('longURL: ', longURL)
   urlDatabase[shortURL] = {
     longURL,
     userID: req.session.user_id
   };
-  //  console.log('urlDatabase: ', urlDatabase)
-  //  console.log('req.body: ', req.body.longURL)
   urlDatabase[shortURL].longURL = req.body.longURL;
   res.redirect('/urls');
 });
+
 // takes user to registration form
 app.get('/register', (req, res) => {
   const templateVars = {
@@ -197,21 +202,18 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  //const user = generateRandomString();
   const templateVars = {
     name: req.body.name,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10),
     user: findUserByEmail(req.body.email, users) // checks if user already registered
   };
-  // console.log('pw:', templateVars.password)
   if (!templateVars.user) {
-    if (templateVars.email === '' || templateVars.password === '') {
+    if (templateVars.name === '' || templateVars.email === '' || templateVars.password === '') {
       res.render('empty_fields_error', templateVars);
     }
     // if not registered - add to the USERS db
     const userID = addNewUser(templateVars.name, templateVars.email, templateVars.password);
-    console.log('userID: ', userID);
     // set a user_id cookie containing the user's newly generated ID
     req.session.user_id = userID;
     res.redirect('/urls');
@@ -219,6 +221,7 @@ app.post('/register', (req, res) => {
     res.render('email_exists_error', templateVars);
   }
 });
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
