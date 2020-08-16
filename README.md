@@ -2,7 +2,7 @@
 
 A full stack web app built with Node and Express that allows users to shorten long URLs (à la bit.ly).
 
-## Final Product
+## Tiny App
 
 !["Screenshot of /urls page, when user is not registered or logged in"](https://github.com/NatalieSokolova/tinyapp-/blob/master/docs/logged-out.png?raw=true)
 !["Screenshot of registration page"](https://github.com/NatalieSokolova/tinyapp-/blob/master/docs/register-page.png?raw=true)
